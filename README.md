@@ -25,8 +25,8 @@ The configuration provisions the following AWS resources:
 
 | Request Path | Target |
 |---|---|
-| `/app1*` | EC2 Instance 1 — responds with `<h1>App 1</h1>` |
-| `/app2*` | EC2 Instance 2 — responds with `<h1>App 2</h1>` |
+| `/app1*` | EC2 Instance 1 — responds with `<h1>App 1</h1>` plus its instance metadata (instance ID, AZ, private IP, instance type) |
+| `/app2*` | EC2 Instance 2 — responds with `<h1>App 2</h1>` plus its instance metadata (instance ID, AZ, private IP, instance type) |
 | anything else | ALB returns `404: Not Found` |
 
 ## Prerequisites
@@ -69,11 +69,22 @@ After `terraform apply` completes, use the printed `api_gateway_url` to test the
 
 ### Using `curl.exe` (PowerShell / Windows)
 ```powershell
-# Should return: <h1>App 1</h1>
+# Should return: <h1>App 1</h1> plus instance metadata (instance ID, AZ, private IP, instance type)
 curl.exe https://<api-id>.execute-api.us-east-1.amazonaws.com/app1/index.html
 
-# Should return: <h1>App 2</h1>
+# Should return: <h1>App 2</h1> plus instance metadata (instance ID, AZ, private IP, instance type)
 curl.exe https://<api-id>.execute-api.us-east-1.amazonaws.com/app2/index.html
+```
+
+Example output for `/app1`:
+```html
+<h1>App 1</h1>
+<ul>
+  <li><strong>Instance ID:</strong> i-0abc123def456789</li>
+  <li><strong>Availability Zone:</strong> us-east-1a</li>
+  <li><strong>Private IP:</strong> 10.0.1.XX</li>
+  <li><strong>Instance Type:</strong> t2.micro</li>
+</ul>
 ```
 
 ### Using `Invoke-WebRequest` (PowerShell)
